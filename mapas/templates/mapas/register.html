@@ -1,0 +1,13 @@
+{% extends "mapas/layout.html" %}
+
+{% load static %}
+{% block body %}  
+        <h1>Register</h1>
+        <div class="reg-form m-5 bg-primary text-white">
+            <form class="form p-3" action= "{% url 'register' %}" method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input class="btn btn-dark" type="submit" value="Register">
+            </form>
+        </div>
+{% endblock %}

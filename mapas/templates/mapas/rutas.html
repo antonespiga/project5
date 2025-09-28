@@ -1,0 +1,50 @@
+{% extends 'mapas/layout.html' %}
+
+{% load static %}
+
+{% block body %}
+<div>
+    {% if user.is_authenticated %}
+    <div id="listaRutas">{{ user }}
+        <div class="row m-3 col-10">
+            <div class="titulo col-2">Usuario</div>
+            <div class="titulo col-2">Fecha</div>
+            <div class="titulo col-2">Ruta</div>
+            <div class="titulo col-2">Descripcion</div>
+            <div class="titulo col-2">Deporte</div>
+        </div>
+        {% for ruta in rutas %}
+        <div class="card mt-3">
+            <div class="row">
+                <div class="card mt-3 col-10" >
+                    <div class="card-body ">
+                        <div class="row">
+                            <div class="col-2">{{ ruta.usuario}}</div>
+                            <div class="col-2">{{ ruta.fecha }}</div>
+
+                            <div class="col-2">
+                                <a href="{% url 'ruta_view' ruta.id %}">
+                                    <div >{{ ruta.nombre }}</div>
+                                </a>
+                            </div>
+                            <div class="col-2">{{ ruta.descripcion }}</div>
+                            <div class="col-2">{{ ruta.sport }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-3 col-2">
+                    <div>delete</div>
+                </div>
+            </div>
+        </div>
+
+        {% empty %}
+        <div>No hay rutas</div>
+        {% endfor %}
+    </div>
+    <a href="{% url 'add_ruta' %}">
+        >> Agregar rutas
+    </a>
+    {% endif %}
+</div>
+{% endblock %}

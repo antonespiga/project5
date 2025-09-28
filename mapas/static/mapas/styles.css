@@ -1,0 +1,28 @@
+table {
+    font-size: small;
+}
+
+#map {
+    height: 40vh;
+    width:80vw;
+    margin: 30px;
+
+}
+.graf-div {
+    display: flex;
+    position: relative;
+    margin:30px;
+    height: 60vh;
+    width: 60vw;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.reg-form {
+    background-color: burlywood;
+    padding:20px;
+}
+
