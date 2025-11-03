@@ -3,11 +3,11 @@
 {% load static %}
 
 {% block body %}
-<div>
+<div class="agregar-form ml-5">
     <form enctype="multipart/form-data" method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="upload" class="btn btn-secondary">
+        <input type="submit" value="Upload" class="btn btn-primary">
     </form>
     
     

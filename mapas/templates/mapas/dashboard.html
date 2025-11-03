@@ -1,0 +1,256 @@
+{% extends "mapas/layout.html" %}
+{% load static %}
+{% load mathfilters %}
+
+{% block body %}
+
+
+
+
+
+<!-- <div id="mi_mapa">Mapa</div> -->
+{% if user.is_authenticated %}
+{{ calendario|json_script:"semana-data" }}
+
+<main class="dashboard-section">
+    <aside class="card side-section col-xl-3 col-lg-4 mt-3 ml-2 mr-4">
+        <div class="user-profile">
+            <img src="{% static 'icons/profile_img.jpg' %}"></img>
+
+        </div>
+        <h3>{{ user.username }}</h3>
+        <br>
+        <ul class="dashboard-totals">
+            <li class="li-data">
+                <span class="span-data">Distance </span>
+                <div class="li-data-data">
+                    {{ totales.total_distance }} km
+                </div>
+            </li>
+            <li class="li-data">
+                <span class="span-data">Time </span>
+                <div class="li-data-data">
+                    {{ totales.total_time }}
+                </div>
+            </li>
+            <li class="li-data">
+                <span class="span-data">Activities </span>
+                <div class="li-data-data">
+                    {{ totales.total_activities }}
+                </div>
+            </li>
+        </ul>
+        <div class="last-activity">
+            <h7>Last activity </h7>
+            <a href="{% url 'activity_view'  activities.first.id%}">
+                <div class="last-activity-row">
+                    <h6><strong>{{ activities.first }} · </strong></h6>
+                    <span class="span-data">{{ activities.first.fecha|date:"j b Y" }}</span>
+                </div>
+            </a>
+        </div>
+        <div class="semana">
+            <h7>Last week</h7>
+            <div class="semana-row ">
+                {% for dia in calendario %}
+                <div class="dia-cal">
+                    <div class="dia-cal-txt">
+                        {{ dia.dia }}
+                    </div>
+                    <div class="dia-cal-num">
+                        {% if dia.actividad %}
+                        <a href="{% url 'activity_view'  dia.actividad.id  %}">
+                            <img alt="" class="mini-img" src="{% static '/icons/'|add:dia.actividad.link %}"></img>
+                        </a>
+                        {% else %}
+                        {{ dia.fecha }}
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <br />
+        <div class="training-log">
+            <a href="{% url 'activities' %}"><span>Training log</span>
+                <img class="chevron-img" alt="" src="{% static '/icons/chevron_right.svg' %}"></img>
+            </a>
+        </div>
+        <div class="esta-semana">
+            <div>
+                <ul class="nav nav-tabs" role="tablist" id="myTab">
+                    <li class="nav-item">
+                        <a data-toggle="tab" class="nav-link active" id="running-tab" href="#running" role="tab" aria-controls="running" aria-selected="true">Running</a>
+                    </li>
+                    <li class="nav-item">
+                        <a data-toggle="tab" class="nav-link" id="swimming-tab" href="#swimming" role="tab" aria-controls="swimming" aria-selected="false" >Swimming</a>
+                    </li>
+                    <li class="nav-item">
+                        <a data-toggle="tab" class="nav-link" id="other-tab" href="#other" role="tab" aria-controls="other" aria-selected="false">Other</a>
+                    </li>
+                </ul>
+                
+            <div style="display:flex;flex-direction: column;align-items: center;">
+                <div>THIS WEEK</div>
+                <span class="totales-semana-tiempo">
+                    {% if total_semana.running.activities_run %}
+                    {{ total_semana.running.activities_run }}
+                    {% else %}
+                    --/--{% endif %} / {{ total_semana.running.distancia }} km</span></div>
+                <div class="tab-content">
+                    <div class="bar-graf">
+                            <canvas id="bars"></canvas>
+                    </div>    
+                    <div class="tab-pane fade show active" id="running" role="tabpanel" aria-labelledby="running-tab">
+                                <div class="totales-semana">
+                                    <div class="totales-semana-tiempo">{{ total_semana.running.tiempo }}</div>
+                                    <div class="totales-semana-subida">{{ total_semana.running.subida }}m</div>
+                                </div>
+                        </div>
+                    <div class="tab-pane fade" id="swimming" role="tabpanel" aria-labelledby="swimming-tab">
+                                <div class="totales-semana">
+                                    <div class="totales-semana-tiempo">{{ total_semana.swimming.tiempo }}</div>
+                                    <div class="totales-semana-subida">{{ total_semana.swimming.subida }}m</div>
+                                </div>
+                    </div>
+                    <div class="tab-pane fade" id="other" role="tabpanel" aria-labelledby="other-tab">Other</div>
+                </div>
+            </div>
+                
+            
+            <div class="wrap-grafico">
+                {% for dia in calendario %}
+                <div class="grafico">
+                    {% now "d" as hoy %}
+                    <div style="display:flex;flex-direction:column">
+                        <h8 class="grafico-h8"><span class="barra" {% if dia.actividad.acums.acum_distancia %} 
+                                                                    style="line-height: {% widthratio dia.actividad.acums.acum_distancia 1 100 %}%;
+                                                                            color: #4caf50;" 
+                                                                    {% else %} style="line-height:{{ 0 }}%;
+                                                                                color: white;
+                                                                                text-decoration: none;" 
+                                                                    {% endif %}>''</span>{{ dia.dia }}
+
+                        </h8>
+                        <div class="today" {% if dia.is_today %} style="display:block" {% else %}
+                            style="visibility:hidden" {% endif %}>''</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="totales-semana-distancia">{{ total_semana.running.distancia }}km</div>
+        </div>
+        <div class="anio">ESTE AÑO</div>
+            
+            
+    </aside>
+    <div class="dashboard-card col-lg-6 col-md-9">
+        {% for activity in activities %}
+        <div class="card activitycard mt-3 ">
+            <div class="ml-3"><strong>{{ activity.usuario}}</strong></div>
+            <div id="date-text" class="date-text ml-3">{{ activity.fecha|date:"j \\d\\e F \\d\\e Y \\a \\l\\a\\s G:i" }}
+            </div>
+            <div class="container-fluid">
+                <div>{{ activity.nombre }}</div>
+                <ul class="card-data">
+                    <li>
+                        <div class="li-data mr-1">
+                            <span class="span-data">
+                                Distancia
+                            </span>
+                            <div class="li-data-data">
+                                {{ activity.acums.acum_distancia }}
+                                <abbr class="unit" title="kilometros">km</abbr>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-data mr-1">
+                            <span class="span-data">
+                                Ritmo
+                            </span>
+                            <div class="li-data-data mr-1">
+                                {{ activity.acums.avg_speed }}
+                                <abbr class="unit" title="min/km">/km</abbr>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-data mr-1">
+                            <span class="span-data">
+                                Tiempo
+                            </span>
+                            <div class="li-data-data">
+                                {{ activity.acums.acum_tiempo }}
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <a href="{% url 'activity_view' activity.id %}">
+                <div class="div-img">
+                    <img alt="" class="mini-img" src="{% static 'images_activities/'|add:activity.imagen %}">
+                </div>
+            </a>
+
+        </div>
+        {% endfor %}
+
+        {% endif %}
+
+        <script src="{% static 'mapas/grafico.js' %}">
+
+        </script>
+        <!--<script>
+        const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
+        let dia_sem = (new Date().getDay()+6 )%7 
+        console.log(dia_sem)
+        let dia_num = new Date().getDate()
+        console.log(dia_num)
+        let mes = new Date().getMonth()-2
+        let anio = new Date().getFullYear().toString()
+        let dia = dia_num - dia_sem ;
+        let semana = new Set()
+        for (let d = 0; d < 7; d++) {
+            semana.add((d+dia).toString())
+        }
+        let semArray = [...semana]
+        const dias = document.getElementsByClassName('dia-cal-num')
+        for ( let i = 0; i < dias.length; i++) {
+            dias[i].innerHTML = dia;
+            dia++;
+        }
+        
+        const act_fechas = document.getElementsByClassName('date-text')
+        for (let i=0; i < act_fechas.length;i++) {
+            let data = ((act_fechas[i].innerHTML.trim().split('de')))
+            if(semana.has(data[0].trim()) && meses[mes] === data[1].trim()) {
+                let idx = semArray.indexOf((data[0].trim()));
+                
+                
+                let sport_icon = document.createElement("div")
+                sport_icon.innerHTML = `<img class="sport-icon"  src="{% static 'icons/running.svg' %}"></img>`
+                dias[idx].replaceWith(sport_icon)
+            }
+        }
+    </script>-->
+        <script>
+            var mi_ubicacion = [43.4168, -2.7138]
+            var mi_mapa = L.map('mi_mapa')
+
+            mi_mapa.setView(mi_ubicacion, 5);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(mi_mapa);
+            var new_coord = null
+            mi_mapa.on('click',
+                (e) => {
+                    new_coord = e.latlng;
+                    mi_mapa.setView(new_coord, 12)
+                    console.log('New center: ' + new_coord)
+                }
+            )
+            mi_mapa.invalidateSize();
+        </script>
+</main>
+{% endblock %}

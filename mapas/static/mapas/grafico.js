@@ -1,37 +1,39 @@
-    const puntos = JSON.parse(document.getElementById('puntos-data').textContent)
-    const bpm = puntos.map(p => p.heart_rate);
-    const altitudes = puntos.map(p => p.altitud);
-    const distancias = puntos.map(p => p.distancia);
-    const tiempos = JSON.parse(document.getElementById('tiempos-data').textContent);
-    const cadencias = JSON.parse(document.getElementById('cadencias-data').textContent);
-    const speeds = JSON.parse(document.getElementById('speeds-data').textContent);
-    const pendientes = puntos.map(c => c.pendiente);
-
+    
+    function getElement(id) {
+        const elemento = document.getElementById(id)
+        if(!elemento) return null
+        try {
+            return JSON.parse(elemento.textContent)
+        }   
+        catch(error) {
+            console.error(error)
+    }}
+    
         function suavizar(data, window) {
-            const res = [...data]
-            // Eliminar ceros o nulls al inicio
-            let i = 0
-            const mitad = Math.floor(window / 2)
-            while(data[i] === 0 || data[i] === null) {
-                //Indice del primer dato no nulo o distinto de 0
-                i++;
-                }
+        const res = [...data]
+        // Eliminar ceros o nulls al inicio
+        let i = 0
+        const mitad = Math.floor(window / 2)
+        while(data[i] === 0 || data[i] === null) {
+            //Indice del primer dato no nulo o distinto de 0
+            i++;
+            }
 
-            for( let j = 0; j < i; j++) {
-                res[j] = data[i]
-            }
-            
-            for( let k = i; k < data.length; k++) {
-                const start = k - Math.max(0, k - mitad);
-                const end = Math.min(data.length, k + mitad + 1) 
-                const parcial = data.slice(start, end)  
-                parcial.sort((a, b) => a - b);
-                const mediana = parcial.length % 2 === 1 ?
-                    parcial[Math.floor(parcial.length / 2)] :
-                   (parcial[parcial.length / 2 - 1] + parcial[parcial.length / 2]) / 2
-            }
-            return res
-            }
+        for( let j = 0; j < i; j++) {
+            res[j] = data[i]
+        }
+        
+        for( let k = i; k < data.length; k++) {
+            const start = k - Math.max(0, k - mitad);
+            const end = Math.min(data.length, k + mitad + 1) 
+            const parcial = data.slice(start, end)  
+            parcial.sort((a, b) => a - b);
+            const mediana = parcial.length % 2 === 1 ?
+                parcial[Math.floor(parcial.length / 2)] :
+                (parcial[parcial.length / 2 - 1] + parcial[parcial.length / 2]) / 2
+        }
+        return res
+        }
         
         
         function kernel_gaussiano(size, sigma) {
@@ -90,14 +92,30 @@
             return `${h.padStart(2,0)}:${m.padStart(2,0)}:${s.padStart(2,0)}`
         }
 
+        function hms_to_seconds(hms) {
+            let h = 0;
+            let m = 0;
+            let s = 0;
+            let data = hms.split(':')
+            if (data.length === 3){
+                h = parseInt(data[0])
+                m = parseInt(data[1])
+                s = parseInt(data[2])
+                return ( s + m*60 + h*360)
+            }
+            else {
+                m = parseInt(data[0])
+                s = parseInt(data[1])
+                return ( s + m*60)
+            } 
+
+        }
+
         function tominkmNumber(speed) {
             return 1000/ speed / 60
         }
 
-        const tiempos_calc = tiempos.map((c, i) => 
-            Math.floor((Date.parse(c) - Date.parse(tiempos[0]))/1000)
-        )
-
+        
         function suavizar_ritmo(speeds, factor) {
             let res = []
             let suma = 0
@@ -125,28 +143,40 @@
                 suma = 0 
                     }
             } 
-            console.log(res) 
             return (res)    
-
         }
 
+       
+        
+
+    function createGraf() {    
+        const grf = document.getElementById('graf')
+        const gpuntos = getElement('puntos-data')
+
+        if(!grf || ! gpuntos) return null
+
+        const bpm = gpuntos.map(p => p.heart_rate);
+        const altitudes = gpuntos.map(p => p.altitud);
+        const distancias = gpuntos.map(p => p.distancia);
+        const tiempos = gpuntos.map(p => p.time);
+        const cadencias =gpuntos.map(c => c.cadencia);
+        const speeds = gpuntos.map(c => c.speed);
+        const pendientes = gpuntos.map(c => c.pendiente);
+        const tiempos_calc = tiempos.map((c, i) => 
+            Math.floor((Date.parse(c) - Date.parse(tiempos[0]))/1000)
+        )
         const cadenciasFilled = fillMissing(cadencias)
         const altitudesFilled = fillMissing(altitudes)
         //const speedsFilled = suavizar_gaussian(speeds, 5, 1.0)
         //const speedsFilled = suavizar_ritmo(speeds, 10)
         const speedsFilled =suavizar_gaussian(suavizar_ritmo(speeds, 5), 5, 1.0)
         const ejex = Math.ceil(tiempos_calc.length / speedsFilled.length)
-
         const speedsExpanded = [];
-for (let i = 0; i < tiempos_calc.length; i++) {
-    // Encuentra el índice correspondiente en speedsFilled
-    const idx = Math.floor(i / ejex);
-    speedsExpanded.push(speedsFilled[idx] !== undefined ? speedsFilled[idx] : null);
-}
-console.log(speedsExpanded)
-        
-        const grf = document.getElementById('graf')
-        
+        for (let i = 0; i < tiempos_calc.length; i++) {
+            // Encuentra el índice correspondiente en speedsFilled
+            const idx = Math.floor(i / ejex);
+            speedsExpanded.push(speedsFilled[idx] !== undefined ? speedsFilled[idx] : null);
+        }
         new Chart(grf, {
             type: 'line',
             data: {
@@ -155,7 +185,7 @@ console.log(speedsExpanded)
                     label: 'bpm',
                     data: bpm,
                     borderColor: 'rgba(245, 23, 25, 1)',
-                    pointHoverColor: 'rgba(225, 225, 225, 1)',
+                    pointHoverColor: 'rgba(225, 22, 25, 1)',
                     },
                     {
                     label: 'Altitud',
@@ -163,8 +193,8 @@ console.log(speedsExpanded)
                     borderColor: 'rgba(12, 20, 250, 1)',
                     pointHoverColor: 'rgba(225, 225, 225, 1)',
                     fill: true,
-                    backgroundColor: 'rgba(200, 200, 200, 0.5)',
-                    },
+                    backgroundColor: 'rgba(200, 200, 200, 0.5)'
+                    } ,
                     {
                     label: 'Cadencia',
                     data: cadencias,
@@ -174,20 +204,25 @@ console.log(speedsExpanded)
                     data: speedsExpanded.map((c, i) => ({ 
                         x: tiempos_calc[i ], 
                         y: tominkmNumber(c)
-                    })                    
-                    )
-                    ,
+                    })),
                     borderColor: 'rgba(145, 223, 25, 1)',
                     pointHoverColor: 'rgba(225, 225, 225, 1)',
                     cubicInterpolationMode: 'monotone',
                     yAxisID: 'y1',
                     tension : 0.1
-                    },
-                    ]
-                },
+                    } 
+                    
+                ]                 
+                    ,
+                    }
+                ,
             options: {
                 plugins: {
                     tooltip: {
+                        backgroundColor: 'rgba(35,85,136,0.6)',
+                        bodyColor: '#fff',
+                        displayColors: 'true',
+                        borderColor: '#fff',
                         callbacks: {
                             title: function(context) {
                                 const xvalue = context[0].parsed.x;
@@ -205,8 +240,6 @@ console.log(speedsExpanded)
                                 let lines = []
                                 if (label === 'bpm' && value != null) {
                                     lines.push(`${label}: ${value} bpm`);}
-                                if (label === 'Altitud' && value != null) {
-                                    lines.push(`${label}: ${value} m`);}
                                 if(label === 'Ritmo' && value != null) {
                                     const m = Math.floor(value)
                                     const s = Math.round((value - m) * 60)
@@ -215,6 +248,8 @@ console.log(speedsExpanded)
                                 if(label === 'Cadencia' && value != null) {
                                     lines.push(`${label}: ${value}`)
                                 }
+                                if (label === 'Altitud' && value != null) {
+                                    lines.push(`${label}: ${value} m`);}
                                 return lines;
                             },
                             afterBody: function(context) {
@@ -235,14 +270,17 @@ console.log(speedsExpanded)
                     onHover: (event, activeElements) => {
                         if (activeElements.length > 0) {
                             const ind = activeElements[0].index;
-                            const ptoX = coords[ind][0];
-                            const ptoY = coords[ind][1];
-                            updateMarker(ptoX, ptoY);
+                            if(ind < coords.length || coords[ind] !== undefined) {
+                                const ptoX = coords[ind][0];
+                                const ptoY = coords[ind][1];
+                                updateMarker(ptoX, ptoY);
+                            }
+                        
                         }
                     },
                 responsive: true,
                 stacked: true,
-                maintainAspectRatio: false,
+                maintainAspectRatio: false,   
                 fill: false,
                 tension: 0.4,
                 pointStyle: 'circle',
@@ -289,3 +327,61 @@ console.log(speedsExpanded)
                     
             }
         }});
+    }
+
+    function createBars(){
+    const bars = document.getElementById('bars')
+    const dias = JSON.parse(document.getElementById('semana-data').textContent)
+    if(!bars || !dias) return null
+
+    const dia = dias.map(p => p.dia)
+    const acum_distancias = dias.map(p => p.actividad ? p.actividad.acums.acum_distancia : null)
+    const acum_tiempo = dias.map(p => p.actividad ? hms_to_seconds(p.actividad.acums.acum_tiempo) : null)
+    
+    window.barChart = new Chart(bars, {
+        type: 'bar',
+        data: {
+            labels: dia,
+            datasets: [{
+                label: false,
+                data: acum_tiempo,
+                barThickness: 6,
+                borderSkipped: true,
+                }],
+                    },
+                options: {
+                    plugins: {
+                        legend: {
+                        display: false
+                    },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || 'Tiempo'
+                                    let value = seconds_to_hms(context.parsed.y)
+                                    return `${value}`
+                                }
+                                }
+                            },
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                        },
+                        y: {
+                            display: false,
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+    })
+            }
+
+document.addEventListener('DOMContentLoaded', () => {
+    createGraf()
+    createBars()
+})

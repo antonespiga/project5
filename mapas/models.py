@@ -2,12 +2,13 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
+
+
 # Create your models here.
 class User(AbstractUser):
     pass
 
-
-class Ruta(models.Model):
+class Activity(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ruta_user", default=None)
     nombre = models.CharField(max_length=200)
     descripcion = models.TextField(blank=True)
@@ -25,6 +26,8 @@ class Ruta(models.Model):
     bpm = models.JSONField(default=list)
     lap_data = models.JSONField(default=list)
     acums = models.JSONField(default=list)
+    imagen = models.CharField(max_length=200, default=None, blank=True, null=True)
+    puntos = models.JSONField(default=list)
 
     def __str__(self):
         return self.nombre

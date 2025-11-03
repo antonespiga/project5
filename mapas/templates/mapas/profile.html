@@ -1,0 +1,55 @@
+{% extends 'mapas/layout.html' %}
+{% load static %}
+
+{% block body %}
+
+<div class="container-fluid">
+    <div class="card profile-card m-3">
+        <div class="user-profile"> 
+            <img alt="" src="{% static '/icons/profile_img.jpg' %}" class="mini_img"/>
+        </div>
+        
+        <div class="card-profile-data">
+            <div class="title p-2">
+                User:
+            </div >
+            <div class="content p-2">
+                {{ user.username }} 
+            </div>
+        </div>
+        <div class="card-profile-data">
+            <div class="title p-2">
+                Username:
+            </div >
+            <div class="content p-2">
+                {{ user.username }} 
+            </div>
+        </div>
+        <div class="card-profile-data">
+            <div class="title p-2">
+                Is user active?:
+            </div >
+            <div class="content p-2">
+                {{ user.is_active }} 
+            </div>
+        </div>
+        <div class="card-profile-data">
+            <div class="title p-2">
+                Is user staff?:
+            </div >
+            <div class="content p-2">
+                {{ user.is_staff }} 
+            </div>
+        </div>
+        <div class="card-profile-data">
+            <div class="title p-2">
+                Date joined:
+            </div >
+            <div class="content p-2">
+                {{ user.date_joined }} 
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

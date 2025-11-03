@@ -1,9 +1,9 @@
 from django import forms
-from .models import Ruta, User
+from .models import Activity, User
 
-class RutaForm(forms.ModelForm):
+class ActivityForm(forms.ModelForm):
     class Meta:
-        model = Ruta
+        model = Activity
         fields = ["nombre", "descripcion", "archivo_tcx", "url_archivo"]
 
 class LoginForm(forms.Form):

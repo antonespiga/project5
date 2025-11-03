@@ -1,0 +1,96 @@
+{% extends 'mapas/layout.html' %}
+
+{% load static %}
+
+{% block body %}
+<div>
+    {% if user.is_authenticated %}
+    <h2>Nombre: {{ activity.nombre }} Fecha: {{ activity.fecha }}</h2>
+    {{ activity.usuario }}
+    {{ activity.puntos|json_script:"puntos-data" }}
+    
+    {{ activity.coordenadas|json_script:"coords-data" }}
+    {{ activity.altitudes|json_script:"altitudes-data" }}
+    {{ activity.bpm|json_script:"bpm-data" }}
+    {{ activity.tiempos|json_script:"tiempos-data" }}
+    {{ activity.distancias|json_script:"distancias-data" }}
+    {{ activity.cadencias|json_script:"cadencias-data" }}
+    {{ speeds|json_script:"speeds-data" }}
+    
+    {{ activity.acums }}
+    <div id="map"></div>
+    <div class="row">
+        <div class="graf-div col-8">
+            <canvas id="graf"></canvas>
+        </div>
+        <div class="table col-4">
+            <table>
+                <thead>
+                <tr>
+                    <th>Distancia</th>
+                    <th>Tiempo</th>
+                    <th>BPM</th>
+                    <th>BPM max</th>
+                    <th>Subida</th>
+                    <th>Bajada</th>
+                    <th>Max_speed</th>
+                    <th>Max_alt</th>
+                    <th>Min_alt</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            {{ activity.acums.acum_distancia }}
+                        </td>
+                        <td>
+                            {{ activity.acums.acum_tiempo }}
+                        </td>
+                        <td>
+                            {{ activity.acums.acum_hr }}
+                        </td>
+                        <td>
+                            {{ activity.acums.hr_max }}
+                        </td>
+                        <td>
+                            {{ activity.acums.acum_subida }}
+                        </td>
+                        <td>
+                            {{ activity.acums.acum_bajada }}
+                        </td>
+                        <td>
+                            {{ activity.acums.max_speed }}
+                        </td>
+                        <td>
+                            {{ activity.acums.h_max }}
+                        </td>
+                        <td>
+                            {{ activity.acums.h_min }}
+                        </td>
+                    </tr>
+                    {% for lap in activity.lap_data %}
+                    <tr>
+                            <td id="total-distancia">{{ lap.acum_distancia }}</td>
+                            <td id="total-tiempo">{{ lap.lap_time }}</td>
+                            <td id="total-bpm">{{ lap.lap_avg_hr }}</td>
+                            <td id="altura-max">{{ lap.lap_max_hr }}</td>
+                            <td id="total-subida">{{ lap.lap_subida }}</td>
+                            <td id="total-bajada">{{ lap.lap_bajada }}</td>
+                            <td id="total-avg_speed">{{ lap.lap_max_speed }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="{% static 'mapas/mapa.js' %}"></script>
+
+    <script src="{% static 'mapas/grafico.js' %}"></script>
+    
+</div>
+<a href="{% url 'add_activity' %}">
+    >> Add activity
+</a>
+{% endif %}
+</div>
+{% endblock %}

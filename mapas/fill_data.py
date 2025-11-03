@@ -1,5 +1,6 @@
 def fill_data(data):
-    length = len(data['coordenadas'])
+    print(data)
+    length = len(data)
     def fill_arr(arr):
         res = []
         last = None
@@ -11,11 +12,7 @@ def fill_data(data):
                 res.append(last)
         return res
     return {
-        "coordenadas": data["coordenadas"],
-        "hrs": fill_arr(data["hrs"]),
-        "altitudes": fill_arr(data["altitudes"]),
-        "distancias": fill_arr(data["distancias"]),
-        "times": fill_arr(data["times"]),
-        "cadencias": fill_arr(data["cadencias"]),
+        "coordenadas": data[1],
+        
 
     }

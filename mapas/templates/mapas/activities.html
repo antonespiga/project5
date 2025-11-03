@@ -1,0 +1,43 @@
+{% extends 'mapas/layout.html' %}
+
+{% load static %}
+
+{% block body %}
+
+    {% if user.is_authenticated %}
+    <div id="listaRutas">{{ user }}
+        <div class="row m-3 col-10">
+            <div class="titulo col-2">Activity</div>
+            <div class="titulo col-2">Description</div>
+            <div class="titulo col-2">Sport</div>
+        </div>
+        {% for activity in activities %}
+        
+                <div class="card mt-3 col-10" >
+                    <div class="card-body ">
+                        <div class="row">
+                            <div class="col-2">
+                                <a href="{% url 'activity_view' activity.id %}">
+                                    <div >{{ activity.nombre }}</div>
+                                </a>
+                            </div>
+                            <div class="col-2">{{ activity.descripcion }}</div>
+                            <div class="col-2">{{ activity.sport }}</div>
+                            <div class="col-3">
+                                <a href="{% url 'activity_view' activity.id %}">
+                                    <img class="mini-img" alt="" src="{% static 'images_activities/'|add:activity.imagen %}"></img>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+            
+
+        {% empty %}
+        <div>No activities</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+{% endblock %}

@@ -1,4 +1,5 @@
-const coords = JSON.parse(document.getElementById('coords-data').textContent);
+const puntos = JSON.parse(document.getElementById('puntos-data').textContent);
+const coords = puntos.map(p => p.coordenadas) 
 const map = L.map('map').setView(coords[0], 13);
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
