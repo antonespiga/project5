@@ -6,7 +6,12 @@ import calendar
 from math import floor
 from geopy.distance import geodesic
 from datetime import datetime
-#from .utils import revisar_puntos
+#from .utils import getUbicacion
+import logging, requests
+
+logger = logging.getLogger(__name__)
+
+
 
 def revisar_puntos(puntos):
     # Extraer datos por categorias
@@ -17,23 +22,25 @@ def revisar_puntos(puntos):
     
 
     # Filtrar los datos
-    speedsFiltered = suavizar_ritmo(speeds, 5)
+    if(not isNone(speeds)):
+        speedsFiltered = suavizar_ritmo(speeds, 5)
     
 
     # Rellenar datos faltantes
     speedsFilled = fill_speeds(speedsFiltered, long)
-    
-    altitudesFilled = fillData(altitudes, long)
+   
+    altitudesFilled = fillData(altitudes, long) if altitudes is not None else None
     
     #print(altitudesFilled)
-    coordenadasFilled = fillData(coords, long)
-    altitudesFilledFiltered = filtrar_altitud(altitudesFilled)
+    
+    coordenadasFilled = fillData(coords, long) if coords is not None else None
+    altitudesFilledFiltered = filtrar_altitud(altitudesFilled) if not isNone(altitudesFilled) else None
     
 
-    for i,p in enumerate(puntos):
+    for i, p in enumerate(puntos):
         p["speed"] = speedsFilled[i]
-        p["altitud"] = altitudesFilledFiltered[i]
-        p["coordenadas"] = coordenadasFilled[i]
+        p["altitud"] = altitudesFilledFiltered[i] if altitudesFilledFiltered is not None else None
+        p["coordenadas"] = coordenadasFilled[i] if coordenadasFilled is not None else None
     return puntos
 
 def suavizar_ritmo(data, factor):
@@ -63,15 +70,19 @@ def fill_speeds(speedsFiltered, long):
 def filtrar_altitud(data):
     res = []
     for p in range(0, len(data)):
-        res.append(0 if float(data[p]) < -10 else data[p])
+        if(not isNone(data[p])):
+            res.append(0 if float(data[p]) < -10 else data[p])
     return res
 
 def fillData(data, long):
     res = []
     last = None if len(data) == 1 else [None, None]
     first = 0
-    while isNone(data[first]):
+    while isNone(data[first]) and first < len(data) - 1:
         first += 1
+    if(first == len(data) -1):
+        print('No hay datos')
+        return None
     for i in range(0, first):
         res.append(data[first])
     last = data[first]
@@ -111,43 +122,42 @@ def parse_calc_tcx(file):
             acum_hr = 0;
             acum_subida = 0;
             acum_bajada = 0;
-            lap_h_inicio = -1;
-            lap_h_actual = 0;
             h_max = 0;
             h_min = 50000; 
             hr_max = 0;
             h_ant = -5555;
             pend = 0;
             fecha = activity.find("tcx:Id", ns)
-            
-            
+           
             for lap in activity.findall("./tcx:Lap", ns):
-                lap_subida = 0;
-                lap_bajada = 0;
                 lap_time_b = lap.find("tcx:TotalTimeSeconds", ns)
                 lap_distance = lap.find("tcx:DistanceMeters", ns)
-                lap_avg_hr = lap.find("tcx:AverageHeartRateBpm/tcx:Value", ns)
+                lap_avg_hr = lap.find("tcx:AverageHeartRateBpm/tcx:Value", ns) 
                 lap_max_hr = lap.find("tcx:MaximumHeartRateBpm/tcx:Value", ns)
                 lap_max_speed_b = lap.find("tcx:MaximumSpeed", ns)
                 lap_cadence = lap.find("tcx:Cadence", ns)
+                lap_subida = 0;
+                lap_bajada = 0;
+                lap_h_inicio = -1000;
+                lap_h_actual = 0;
+                
+                
                 for lap_altitude in lap.findall("./tcx:Track/tcx:Trackpoint", ns):
-                    altitude = lap_altitude.find("tcx:AltitudeMeters", ns)
+                    altitude = lap_altitude.find("tcx:AltitudeMeters", ns) if (lap_altitude is not None) else None
                 
                     if(altitude is not None):
-                        if(lap_h_inicio == -1):
+                        if(lap_h_inicio == -1000):
                             lap_h_inicio = altitude.text
                             lap_h_actual = altitude.text
                         else:
                             lap_gap = float(altitude.text) - float(lap_h_actual)
+
                             if(lap_gap > 0):
                                 lap_subida += lap_gap
-                                acum_subida += lap_gap;
                                 lap_h_actual = altitude.text
                             else:
                                 lap_bajada += lap_gap
-                                acum_bajada += lap_gap;
                                 lap_h_actual = altitude.text
-                
                 if lap_max_hr is not None:
                     if (float(lap_max_hr.text) > float(hr_max)):
                         hr_max = lap_max_hr.text
@@ -160,9 +170,9 @@ def parse_calc_tcx(file):
                 lap_avg_speed = to_minkm(float(lap_distance.text) / float(lap_time_b.text))
                 lap_data.append({
                 "lap_time": lap_time,
-                "lap_distance": lap_distance.text,
-                "lap_avg_hr": lap_avg_hr.text,
-                "lap_max_hr": lap_max_hr.text,
+                "lap_distance": lap_distance.text if lap_distance is not None else None,
+                "lap_avg_hr": lap_avg_hr.text if lap_avg_hr is not None else None,
+                "lap_max_hr": lap_max_hr.text if lap_max_hr is not None else None,
                 "lap_max_speed": lap_max_speed,
                 "lap_avg_speed": lap_avg_speed,
                 "lap_cadence": lap_cadence.text if lap_cadence is not None else None,
@@ -171,15 +181,16 @@ def parse_calc_tcx(file):
                 "lap_subida": f"{float(lap_subida):.0f}",
                 "lap_bajada": f"{float(lap_bajada):.0f}"
                     })
-            
+                
                 for track in lap.findall("./tcx:Track", ns):
                     inicio = True
                     coord_ant = None
                     speed = 0
                     avg_speed=0;
                     act_speed = 0;
-                    lap_h_inicio = -1;
-                    lap_h_actual = 0;
+                    h_inicio = -1000;
+                   
+                    h_actual = 0;
                     for trackpoint in track.findall("./tcx:Trackpoint", ns):
                         time = trackpoint.find("tcx:Time",ns)
                         distance = trackpoint.find("tcx:DistanceMeters", ns)
@@ -206,6 +217,17 @@ def parse_calc_tcx(file):
                             acum_hr += float(hr.text)
                             hrs.append(hr.text)
                         if altitude is not None :
+                            if(h_inicio == -1000):
+                                h_inicio = altitude.text
+                                h_actual = altitude.text
+                            else:
+                                gap = float(altitude.text) - float(h_actual)
+                                if(gap > 0):
+                                    acum_subida += gap;
+                                    h_actual = altitude.text
+                                else:
+                                    acum_bajada += gap;
+                                    h_actual = altitude.text
                             if float(altitude.text) > (h_max):
                                 h_max = floor(float(altitude.text))
                             elif float(altitude.text) < (h_min):
@@ -232,14 +254,13 @@ def parse_calc_tcx(file):
                                 if distance is not None:
                                     gap = float(distance.text) - ant_dist;
                                     ant_dist = float(distance.text)
-                                    
                         else:
                             coord = [None, None]
                         if cadence is not None:
                             cadences.append(cadence.text)
                         if lap_pace is not None:
                             paces.append(lap_pace)
-
+                        
                         punto = {
                             "coordenadas": coord if coord is not None else [None, None],
                             "cadencia": cadence.text if cadence is not None else None,
@@ -253,13 +274,16 @@ def parse_calc_tcx(file):
                             "speed": act_speed if act_speed is not None else None
                         }
                         puntos.append(punto)
+                
     puntos_revisados = revisar_puntos(puntos)
     #print(puntos_revisados)
     #print((datetime.fromisoformat(fecha.text)).strftime("%A, %d de %B de %Y"))
+    ubicacion = getUbicacion(puntos[0].get("coordenadas"))
     return {
         "puntos": puntos_revisados,
         "lap_data":lap_data,
         "fecha": fecha.text,
+        "ubicacion": ubicacion,
         "sport": sport,
         "acums": {
             "acum_tiempo": seconds_to_hms(acum_tiempo),
@@ -302,7 +326,15 @@ def speed_filter(data, window_size=5):
         filtered_formatted.append(to_minkm(x))
     return filtered_formatted
 
+def getUbicacion(coord):
+    try:
+        res = requests.get(f'https://photon.komoot.io/reverse?lon={coord[1]}&lat={coord[0]}')
+        location = res.json().get('features')[0].get('properties')
+    except Exception:
+        location = None
+    return location
+
 if __name__ == "__main__":
-    file_path = os.path.join( os.path.dirname( os.getcwd()) ,"project5", "rutas", "anton_espiga_2025-08-10_12-02-48.TCX")
+    file_path = os.path.join( os.path.dirname( os.getcwd()) , "rutas", "anton_espiga_2025-10-18_13-23-40.TCX")
     parse_calc_tcx(file_path)
-    calendar.prweek()
+    

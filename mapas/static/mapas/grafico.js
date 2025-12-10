@@ -329,22 +329,56 @@
         }});
     }
 
-    function createBars(){
-    const bars = document.getElementById('bars')
-    const dias = JSON.parse(document.getElementById('semana-data').textContent)
-    if(!bars || !dias) return null
-
-    const dia = dias.map(p => p.dia)
-    const acum_distancias = dias.map(p => p.actividad ? p.actividad.acums.acum_distancia : null)
-    const acum_tiempo = dias.map(p => p.actividad ? hms_to_seconds(p.actividad.acums.acum_tiempo) : null)
+    function createBars() {
     
-    window.barChart = new Chart(bars, {
+    const bars = document.getElementById('bars')
+    const dias_brut = (document.getElementById('semana'))
+
+    if(!bars || !dias_brut) return null
+    
+    const dias = JSON.parse(dias_brut.textContent)
+    const totales_semana = JSON.parse(document.getElementById('totales-semana').textContent)
+    const totales = JSON.parse(document.getElementById('totales').textContent)
+    const diario = JSON.parse(document.getElementById('semana-sport').textContent)
+    const semana_run = diario.map(p => p.d_run)
+    const semana_swimm = diario.map(p => p.d_swimm)
+    const semana_other = diario.map(p => p.d_other)
+    const ctx = bars.getContext('2d')
+    
+    const dists_run = semana_run.map(p => p.actividad ?  p.actividad.acums.acum_distancia : null)
+    const dists_swimm = semana_swimm.map(p => p.actividad ?  p.actividad.acums.acum_distancia : null)
+    const dists_other = semana_other.map(p => p.actividad ?  p.actividad.acums.acum_distancia : null)
+    
+    const act_sem_run = totales_semana.total_activities_run || 0
+    const act_sem_swimm = totales_semana.total_activities_swimm || 0
+    const act_sem_other = totales_semana.total_activities_other || 0
+
+    const km_semana_run = totales_semana.total_distancia_run || 0
+    const km_semana_swimm = totales_semana.total_distancia_swimm || 0
+    const km_semana_other = totales_semana.total_distancia_other || 0
+
+    const anual_time_run = totales.total_time_run_year || 0
+    const anual_time_swimm = totales.total_time_swimm_year || 0
+    const anual_time_other = totales.total_time_other_year || 0
+    
+    const anual_distance_run = totales.total_distance_run_year || 0
+    const anual_distance_swimm = totales.total_distance_swimm_year || 0
+    const anual_distance_other = totales.total_distance_other_year ||0
+
+    
+    const dia = dias.map(p => p.dia)
+    
+    //const acum_tiempo_run = semana_run.map(p => p.actividad ? hms_to_seconds(p.actividad.acums.acum_tiempo) : null)
+    //const acum_tiempo_swimm = semana_swimm.map(p => p.actividad ? hms_to_seconds(p.actividad.acums.acum_tiempo) : null)
+    //const acum_tiempo_other = semana_other.map(p => p.actividad ? hms_to_seconds(p.actividad.acums.acum_tiempo) : null)
+    
+    barChart = new Chart(bars, {
         type: 'bar',
         data: {
             labels: dia,
             datasets: [{
                 label: false,
-                data: acum_tiempo,
+                data: dists_run || newData,
                 barThickness: 6,
                 borderSkipped: true,
                 }],
@@ -379,9 +413,199 @@
                     }
                 }
     })
-            }
+    }
+function createBubbles() {
+        const bubble = document.getElementById("bubble")
+        const datos_semana_brut = (document.getElementById("datos_semana"))
 
-document.addEventListener('DOMContentLoaded', () => {
+        if(!bubble || !datos_semana_brut) return null
+
+        dias_semana_texto = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
+        const datos_semana = JSON.parse(datos_semana_brut.textContent)
+        const data_bubble = datos_semana.map(e => {
+                const dia= e.dia_semana
+                const r = e.distancia * 3
+                return { x: dia, y: 0.5, r: r }
+        })
+        
+        new Chart(bubble, {
+            type: 'bubble',
+            data: {
+                labels: dias_semana_texto,
+                datasets: [{
+                    label: "Distancia",
+                    data: data_bubble ,
+                    backgroundColor: 'rgba(102, 147, 245, 1)'
+                }]
+            },
+            options: {
+                plugins: {
+                        legend: {
+                        display: false
+                        }},
+                        scales: {
+                            x: {
+                                type:"category",
+                                labels: dias_semana_texto,
+                                grid: {
+                                    display: false
+                                    },
+                                    
+                            },
+                            y: {
+                                min: 0,
+                                max: 1,
+                                display: false,
+                                grid: {
+                                    display: false
+                                },
+                            }
+                },
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                tooltip: {
+                    callbacks: {
+                        label(context) {
+                            const distancia = context.raw.r
+                            return `Distancia: ${(distancia/3).toFixed(2)} km`;
+                        }
+                    }
+                }
+            }
+}})
+    }
+
+function createBarsMes() {
+    const bar_mes = document.getElementById("bar-mes")
+    const datos_mes_brut = (document.getElementById("activities_mes"))
+    if(!bar_mes || !datos_mes_brut) return null
+
+    const datos_mes = JSON.parse(datos_mes_brut.textContent)
+    const dia_bars_mes = datos_mes.map(e => e.dia)
+    const dist_bars_mes = datos_mes.map(e => e.distancia)
+
+    new Chart(bar_mes, {
+        type: 'bar',
+        data: {
+            labels: dia_bars_mes,
+            datasets: [{
+                label: {
+                    display: false
+                },
+                data: dist_bars_mes
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                        display: false
+                    },
+                },
+            scales: {
+            x: {
+                ticks: {
+                    display: false
+                },
+                grid: {
+                    display: false
+                }
+            },
+            y: {
+                display: false,
+                grid: {
+                    display: false
+                }
+            }
+        },
+        
+        }
+    })
+    }
+
+    function createBarYear() {
+        const bar_year = document.getElementById("bar-year")
+        const datos_year_brut = document.getElementById("year_by_mes")
+
+        if(!bar_year || !datos_year_brut) return null
+
+        const datos_year = JSON.parse(datos_year_brut.textContent)
+        const meses = datos_year.map(e => e.mes)
+        const data_year_distancia = datos_year.map(e => e.distancia_mes)
+        console.log(datos_year)
+        
+
+        new Chart(bar_year, {
+            type: 'bar',
+            data: {
+                labels: meses,
+                datasets: [{
+                    barThickness: 4,
+                    barColor: '#007cb1',
+                    data: data_year_distancia
+                }]
+            },
+                options: {
+                    scales: {
+                        x: {
+                            display: false,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            display: false,
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+                },
+                
+            }
+        )
+    }
+
+
+    document.querySelectorAll('#myTab a').forEach(a => {
+        a.addEventListener('click', (e) => {
+            const sport = a.getAttribute('aria-controls').toString()
+            const newData = sport === 'running' ? dists_run : sport === 'swimming' ? dists_swimm : dists_other
+            const total_text = sport === 'running' ? act_sem_run : sport === 'swimming' ? act_sem_swimm : act_sem_other
+            const km_text = sport === 'running' ? km_semana_run : sport === 'swimming' ? km_semana_swimm : km_semana_other
+            const sem_txt = sport === 'running' ? km_semana_run : sport === 'swimming' ? km_semana_swimm : km_semana_other
+            const anual_time_text = sport === 'running' ? anual_time_run : sport === 'swimming' ? anual_time_swimm : anual_time_other
+            const anual_dist_text = sport === 'running' ? anual_distance_run : sport === 'swimming' ? anual_distance_swimm : anual_distance_other
+            
+            const tot_sem_t = document.getElementsByClassName('total-span-tiempo')[0]
+            const km_sem_t = document.getElementsByClassName('total-span-distancia')[0]
+            const sem_t = document.getElementsByClassName('totales-semana-distancia')[0]
+            const anual_t_t = document.getElementById('anual-time')
+            const anual_d_t = document.getElementById('anual-distance')
+
+            tot_sem_t.textContent = `${total_text}`
+            km_sem_t.textContent = `${km_text}`
+            sem_t.textContent = `${sem_txt} km`
+            anual_t_t.textContent = `${anual_time_text}`
+            anual_d_t.textContent = `${anual_dist_text} km`
+            barChart.data.datasets[0].data = newData
+            barChart.update()
+        })
+    })
+
+     
+    
+
+    document.addEventListener('DOMContentLoaded', () => {
     createGraf()
     createBars()
+    createBubbles()
+    createBarsMes()
+    createBarYear()
 })

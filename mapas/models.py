@@ -12,6 +12,7 @@ class Activity(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ruta_user", default=None)
     nombre = models.CharField(max_length=200)
     descripcion = models.TextField(blank=True)
+    ubicacion = models.JSONField(default=list, blank=True, null=True)
     fecha = models.DateTimeField(default=None, blank=True, null=True)
     sport = models.CharField(max_length=200, default=None, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

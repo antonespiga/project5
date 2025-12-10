@@ -1,0 +1,79 @@
+{% extends 'mapas/layout.html' %}
+
+{% load static %}
+
+{% block body %}
+
+{% if user.is_authenticated %}
+
+{{ year_by_mes|json_script:"year_by_mes" }}
+
+<div>
+    <span>
+        <a href="{% url 'year' prev_year %}">
+            <i class="material-icons m-2 p-2">chevron_left</i>
+        </a>
+    </span>
+        <span class="year-number m-2 p-2">
+            {{ year }}
+        </span>
+    <span>
+        <a href="{% url 'year' next_year %}">
+            <i class="material-icons m-2 p-2">chevron_right</i>
+        </a>
+    </span>
+    </div>
+    <div class="container-fluid">
+        <div class="row year-cal-tots-contenedor">
+        <div class="bars-year">
+            <canvas id="bar-year">
+            </canvas>
+            
+        </div>
+        <div class="row year-cal-tots-row">
+            <div class="year-cal-tots">
+                <div style="font-size: 2.5em;color: #007fb6;">
+                    {{ count }}
+                </div>
+                <span>Activities</span>
+            </div>
+            <div class="year-cal-tots">
+                <div style="font-size: 2.5em">
+                    {{ year_tots.acum_dist_tots }}
+                </div>
+                <div>
+                    <span>Kilómetros</span>
+                </div>
+            </div>
+            <div class="year-cal-tots">
+                <div style="font-size: 2.5em">
+                    {{ year_tots.acum_tiempo_tots }}
+                </div>
+                <div>
+                    <span>Horas</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        {% for mes in year_by_mes %}
+        <ul style="display: block;">
+            <li class="year-cal-month">
+                <a href="{% url 'mes' mes.year mes.mes_num %}">
+                    <div class="year-cal-month-title">{{ mes.mes }}</div>
+                <div class="year-cal-month-tiempo">
+                    <strong>{{ mes.tiempo_mes }}</strong>
+                    <div class="year-cal-month-un"><small>{{ mes.count }} act(s)</small></div>
+                </div>
+                <div class="bars-mes">
+                    <canvas id="bar-mes"></canvas>
+                </div>
+                </a>
+            </li>
+             </ul>
+        {% endfor %}
+    </div>
+{% endif %}
+</div>
+<script src="{% static 'mapas/grafico.js' %}"></script>
+{% endblock %}

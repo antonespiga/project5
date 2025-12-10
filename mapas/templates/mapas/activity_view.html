@@ -5,8 +5,8 @@
 {% block body %}
 <div>
     {% if user.is_authenticated %}
-    <h2>Nombre: {{ activity.nombre }} Fecha: {{ activity.fecha }}</h2>
-    {{ activity.usuario }}
+    <h2>{{ activity.nombre }} - {{ activity.fecha }}</h2>
+    <span>{{ activity.ubicacion.city }}</span>
     {{ activity.puntos|json_script:"puntos-data" }}
     
     {{ activity.coordenadas|json_script:"coords-data" }}
@@ -17,7 +17,7 @@
     {{ activity.cadencias|json_script:"cadencias-data" }}
     {{ speeds|json_script:"speeds-data" }}
     
-    {{ activity.acums }}
+   
     <div id="map"></div>
     <div class="row">
         <div class="graf-div col-8">

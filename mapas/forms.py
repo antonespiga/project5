@@ -14,3 +14,8 @@ class RegisterForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["username", "password", "email"]
+
+class Delete_confirmForm(forms.ModelForm):
+     class Meta:
+          model: Activity
+          fields = ["activity_id","nombre"]

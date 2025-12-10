@@ -1,0 +1,83 @@
+{% extends 'mapas/layout.html' %}
+
+{% load static %}
+
+{% block body %}
+
+{% if user.is_authenticated %}
+{{ activities_mes|json_script:"activities_mes"}}
+
+<div class="container-fluid">
+    <div class="row">
+        <a href="{% url 'mes' prev_year prev_month %}">
+            <i class="material-icons m-2 p-2">chevron_left</i>
+        </a>
+        <div class="m-2 p-2 small">{{ lunes }}</div>
+        <div class="m-2 p-2">Mes {{ mes_actual }} / {{ year_actual }}</div>
+        <div class="m-2 p-2 small">{{ domingo }}</div>
+        <a href="{% url 'mes' next_year next_month %}">
+            <i class="material-icons m-2 p-2">chevron_right</i>
+        </a>
+    </div>
+    <div class="bars-mes">
+        <canvas id="bar-mes"></canvas>
+    </div>
+    <table class="calendar-table">
+        <thead class="calendar-table-head">
+            <tr>
+                <th class="p-2">LUNES</th>
+                <th class="p-2">MARTES</th>
+                <th class="p-2">MIÉRCOLES</th>
+                <th class="p-2">JUEVES</th>
+                <th class="p-2">VIERNES</th>
+                <th class="p-2">SÁBADO</th>
+                <th class="p-2">DOMINGO</th>
+                <th class="p-2">RESUMEN</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for week in weeks %}
+            <tr class="calendar-week">
+                {% for day in week %}
+                <td class="calendar-day {% if not day.actual_month %} not-month {% endif %}">
+                    
+                        {% if day.dia %}
+                        <div class="day-number">
+                        {{ day.dia|date:"j" }}
+                        </div>
+                        {% else %}
+                        <div class="resumen_semana">
+                            <strong>{{ day.cont }} activities</strong>
+                            <strong>{{ day.suma_dist }}km</strong>
+                            <strong>{{ day.suma_tiempo }}</strong>
+                            
+                        </div>
+                        
+                        {% endif %}
+                    {% if day.acts_dia %}
+                    <ul class="calendar-day-list">
+                        {% for act in day.acts_dia %}
+                        <li class="calendar-day-activity">
+                            <a class="calendar-a" href="{% url 'activity_view' act.id %}">
+                                <div class="card calendar-activities-card">
+                                    <div>{{ act.nombre }}</div>
+                                    <div><object class="calendar-day-img"
+                                            data="{% static '/icons/'|add:act.sport|add:'.svg' %}"></object> {{ act.acums.acum_tiempo }}</div>
+                                </div>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% empty %}
+            <div>No activities</div>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+<script src="{% static 'mapas/grafico.js' %}"></script>
+{% endblock %}

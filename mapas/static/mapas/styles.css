@@ -41,7 +41,6 @@ body {
     top: 75px;
     left: 8px;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background-color: ghostwhite;
 }
 
 #mi_mapa {
@@ -105,7 +104,7 @@ p {
     object-fit: cover;
     object-position: right center;
     height:auto;
-    max-height:250px;
+    max-height:150px;
     width: 100%;
     display: block;
 }
@@ -168,6 +167,18 @@ p {
     width: 100%;
 }
 
+#listaRutas {
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    margin-left: 20px;
+}
+
+.all-activities-header {
+    display: flex;
+    justify-content: center;
+}
+
 .last-activity {
     display: flex;
     flex-direction: column;
@@ -192,6 +203,7 @@ p {
     position: relative;
     top: 8vh;
     width: 100%;
+    justify-content: center;
     align-items:center;
     border-top: 1px solid #f2f2f0;
     padding-top: 10px;
@@ -203,11 +215,12 @@ p {
     flex-direction: row;
     width: 100%;
     margin-left: 30px;
+    margin-bottom: 20px;
 }
 
 .semana h7 {
     display: flex;
-    justify-content: start;
+    justify-content: space-between;
     width: 100%;
     margin-left: 22px;
     }
@@ -303,9 +316,16 @@ p {
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
+.totales-span, .anio-row {
+    display: flex;
+    flex-direction: row;
+    font-size: small;
+}
+
+
+
 .bar-graf {
     width: 80%;
-    
 }
 
 .wrap-grafico {
@@ -355,6 +375,7 @@ p {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    padding: 10px;
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-size: small;
 }
@@ -375,6 +396,11 @@ p {
 .anio {
     position: relative;
     margin-top: 18vh;
+}
+
+.anio span {
+    display: flex;
+    justify-content: center;
 }
 
 .navbar-wrap {
@@ -413,8 +439,63 @@ p {
   font-style: normal;
   font-size: 36px;
   color: rgb(216, 70, 8)!important;
- 
+ }
+
+.google-sans-code-google {
+  font-family: "Google Sans Code", monospace;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+} 
+
+.ubuntu-light {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 300;
+  font-style: normal;
 }
+
+.ubuntu-regular {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.ubuntu-medium {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.ubuntu-bold {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.ubuntu-light-italic {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.ubuntu-regular-italic {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.ubuntu-medium-italic {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.ubuntu-bold-italic {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
 
 #dropMenu {
     color: #343a40 !important ;
@@ -494,6 +575,164 @@ p {
     padding-bottom: 2%;
 }
 
+.table-head {
+    background-color: #e6ebeb;
+    border-color: 1px solid #a9abab;
+    box-shadow: 0px 1px 4px #a9abab;
+}
+
+.table-espacio {
+    width: 5rem;
+}
+
+.table-opciones {
+    width: 5rem;
+}
+
+.calendar-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.calendar-table-head {
+    background: #f0e6de;
+    padding: 5px;
+    text-align: center;
+}
+
+.calendar-day {
+    height: 6rem;
+    width: 14.28%;
+    background-color: #f6ce9d;
+    border: 2px solid #c6ccd3;
+    border-radius: 5px;
+    vertical-align: top;
+}
+
+.calendar-day.not-month {
+    background-color:#f0dec7 ;
+    color:rgba(12, 12, 12, 0.3);
+}
+
+.day-number {
+    font-weight: 700;
+    border-radius: 30px;
+    background-color: #cee8e8;
+    width:25px;
+    padding: 3px;
+    justify-content: center;
+}
+
+.calendar-a {
+    font-size: small;
+}
+
+.calendar-day-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    padding:0;
+}
+
+.calendar-activities-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    background-color: #189791;
+    border: 1px solid #c5c6c7;
+    color: white;
+}
+
+.calendar-day-activity {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    
+    text-decoration: none;
+}
+
+.calendar-day-img {
+    height:1rem;
+    background-color:rgb(255, 255, 255);
+}
+
+.resumen_semana {
+    background-color: #e6ebeb;
+    display: flex;
+    flex-direction: column;
+}
+
+.graf-circles {
+    height: 20rem;
+    width: 50rem;
+}
+
+
+.bars-mes {
+    width: 30%;
+    height: 100px;;
+    
+}
+
+.year-number {
+    font-size: large;
+    font-weight: 300;
+    
+}
+
+.year-cal-month {
+    float: left;
+    width: 25%;
+    padding: 10px;
+    list-style: none;
+    background-color:  #f7f7fa;
+    margin: 5px;
+}
+
+.year-cal-month:hover {
+    background-color: #007fb6;
+    color: #ffffff;
+}
+
+
+.year-cal-month-title {
+    text-align: right;
+    font-weight: 300;
+}
+
+.year-cal-tots-contenedor {
+    display: flex;
+    justify-content: space-around;
+    width: 90%;
+}
+
+.year-cal-tots {
+    display: flex;
+    flex-direction: column;
+    margin: 5px;
+    align-items: center;
+    padding: 5px;
+    text-align: right;
+}
+
+.year-cal-tots-row {
+    display: flex;
+    align-items: end;
+}
+
+.bars-year {
+    border-bottom: 2px solid #007cb1;
+    height: 60px;
+    width: 160px;
+}
+
+@media(max-width: 1260px) {
+    .activity-card {
+        display:flex;
+        flex-direction: column;
+    }
+}
 
 
 @media(max-width:991px) {

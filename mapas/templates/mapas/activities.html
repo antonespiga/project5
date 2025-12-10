@@ -5,39 +5,53 @@
 {% block body %}
 
     {% if user.is_authenticated %}
-    <div id="listaRutas">{{ user }}
-        <div class="row m-3 col-10">
-            <div class="titulo col-2">Activity</div>
-            <div class="titulo col-2">Description</div>
-            <div class="titulo col-2">Sport</div>
-        </div>
-        {% for activity in activities %}
-        
-                <div class="card mt-3 col-10" >
-                    <div class="card-body ">
-                        <div class="row">
-                            <div class="col-2">
-                                <a href="{% url 'activity_view' activity.id %}">
-                                    <div >{{ activity.nombre }}</div>
-                                </a>
-                            </div>
-                            <div class="col-2">{{ activity.descripcion }}</div>
-                            <div class="col-2">{{ activity.sport }}</div>
-                            <div class="col-3">
-                                <a href="{% url 'activity_view' activity.id %}">
-                                    <img class="mini-img" alt="" src="{% static 'images_activities/'|add:activity.imagen %}"></img>
-                                </a>
-                            </div>
+    <div class="container-fluid">
+        <table>
+        <thead class="table-head">
+            <tr>
+                <th class="p-2">Deporte</th>
+                <th class="p-2">Fecha</th>
+                <th class="p-2">Titulo</th>
+                <th class="p-2">Distancia</th>
+                <th class="p-2">Tiempo</th>
+                <th class="p-2">Subida</th>
+                <th class="p-2">FC Med</th>
+                <th class="p-2">Ritmo</th>
+                <th class="p-2">Ubicación</th>
+                <th class="table-espacio p-2"></th>
+                <th class="table-opciones p-2"></th>
+                <th class="table-opciones p-2"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for activity in activities %}
+            <tr>
+                <td>
+                    <div class=" m-2">
+                    <a href="{% url 'activity_view' activity.id %}">
+                        <div >{{ activity.sport }}</div>
+                    </a>
                         </div>
-                    </div>
-                </div>
-               
-            
-
+                </td>
+                <td><div class="m.2">{{ activity.fecha }}</div></td>
+                <td><div class="m-2">{{ activity.nombre }}</div></td>
+                <td><div class="m-2">{{ activity.acums.acum_distancia }}</div></td>
+                <td><div class="m-2">{{ activity.acums.acum_tiempo }}</div></td>
+                <td><div class="m-2">{{ activity.acums.acum_subida }}</div></td>
+                <td><div class="m-2">{{ activity.acums.acum_hr }}</div></td>
+                <td><div class="m-2">{{ activity.acums.avg_speed }}</div></td>
+                <td><div class="m-2">{{ activity.ubicacion.city }}</div></td>
+                <td></td>
+                <td>Editar</td>
+                <td> <a href="{% url 'delete_activity' activity.id %}">Eliminar</a></td>
+            </tr>
         {% empty %}
         <div>No activities</div>
         {% endfor %}
+        </tbody>    
+    </table>
     </div>
+                
     {% endif %}
 
 {% endblock %}
