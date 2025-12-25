@@ -4,20 +4,21 @@
 
 {% block body %}
 
-    {% if user.is_authenticated %}
-    <div class="container-fluid">
-        <table>
+{% if user.is_authenticated %}
+<div class="container-fluid">
+    <table>
         <thead class="table-head">
             <tr>
-                <th class="p-2">Deporte</th>
-                <th class="p-2">Fecha</th>
+                <th id="sort-deporte" class="p-2"><a href="{% url 'activities_sorted' "sport" state %}">Deporte</a></th>
+                <th id="sort-fecha" class="p-2">Fecha</th>
                 <th class="p-2">Titulo</th>
-                <th class="p-2">Distancia</th>
-                <th class="p-2">Tiempo</th>
-                <th class="p-2">Subida</th>
-                <th class="p-2">FC Med</th>
-                <th class="p-2">Ritmo</th>
-                <th class="p-2">Ubicación</th>
+                <th id="sort-distancia" class="p-2"><a href="{% url 'activities_sorted' "distancia" state %}">Distancia</a></th>
+                <th id="sort-tiempo" class="p-2"><a href="{% url 'activities_sorted' "tiempo" state %}">Tiempo</a></th>
+                <th id="sort-subida" class="p-2"><a href="{% url 'activities_sorted' "subida" state %}">Subida</a></th>
+                <th id="sort-fc" class="p-2"><a href="{% url 'activities_sorted' "fc_med" state %}">FC Med</a></th>
+                <th id="sort.ritmo" class="p-2"><a href="{% url 'activities_sorted' "ritmo" state %}">Ritmo</a></th>
+                <th id="sort-ubicacion" class="p-2"><a href="{% url 'activities_sorted' "ubicacion" state %}">Ubicación</a>
+                </th>
                 <th class="table-espacio p-2"></th>
                 <th class="table-opciones p-2"></th>
                 <th class="table-opciones p-2"></th>
@@ -28,30 +29,46 @@
             <tr>
                 <td>
                     <div class=" m-2">
-                    <a href="{% url 'activity_view' activity.id %}">
-                        <div >{{ activity.sport }}</div>
-                    </a>
-                        </div>
+                        <a href="{% url 'activity_view' activity.id %}">
+                            <div>{{ activity.sport }}</div>
+                        </a>
+                    </div>
                 </td>
-                <td><div class="m.2">{{ activity.fecha }}</div></td>
-                <td><div class="m-2">{{ activity.nombre }}</div></td>
-                <td><div class="m-2">{{ activity.acums.acum_distancia }}</div></td>
-                <td><div class="m-2">{{ activity.acums.acum_tiempo }}</div></td>
-                <td><div class="m-2">{{ activity.acums.acum_subida }}</div></td>
-                <td><div class="m-2">{{ activity.acums.acum_hr }}</div></td>
-                <td><div class="m-2">{{ activity.acums.avg_speed }}</div></td>
-                <td><div class="m-2">{{ activity.ubicacion.city }}</div></td>
+                <td>
+                    <div class="m.2">{{ activity.fecha }}</div>
+                </td>
+                <td>
+                    <div class="m-2">{{ activity.nombre }}</div>
+                </td>
+                <td>
+                    <div class="m-2">{{ activity.acums.acum_distancia }}</div>
+                </td>
+                <td>
+                    <div class="m-2">{{ activity.acums.acum_tiempo }}</div>
+                </td>
+                <td>
+                    <div class="m-2">{{ activity.acums.acum_subida }}</div>
+                </td>
+                <td>
+                    <div class="m-2">{{ activity.acums.acum_hr }}</div>
+                </td>
+                <td>
+                    <div class="m-2">{{ activity.acums.avg_speed }}</div>
+                </td>
+                <td>
+                    <div class="m-2">{{ activity.ubicacion.city }}</div>
+                </td>
                 <td></td>
                 <td>Editar</td>
                 <td> <a href="{% url 'delete_activity' activity.id %}">Eliminar</a></td>
             </tr>
-        {% empty %}
-        <div>No activities</div>
-        {% endfor %}
-        </tbody>    
+            {% empty %}
+            <div>No activities</div>
+            {% endfor %}
+        </tbody>
     </table>
-    </div>
-                
-    {% endif %}
+</div>
+
+{% endif %}
 
 {% endblock %}

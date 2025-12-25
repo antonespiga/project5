@@ -7,7 +7,6 @@
         <div class="ml-5 p-2">{{ activity.id }}</div>
         <div class="ml-5 p-2">{{ activity.nombre }}</div>
     </div>
-        
         <div class="m-5 bg-secondary text-white">
             <form class="form p-3" action= "{% url 'delete_activity' activity.id %}" method="POST">
                 {% csrf_token %}

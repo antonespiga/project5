@@ -1,0 +1,80 @@
+{% extends 'mapas/layout.html' %}
+{% load static %}
+
+{% block body %}
+
+<div class="container-fluid">
+    <div class="card profile-card m-3">
+        <div class="user-profile"> 
+            <img alt="" src="{% static '/icons/profile_img.jpg' %}" class="mini_img"/>
+        </div>
+        <div class="card-profile-data">
+            <div class="title p-2">
+                Edad:
+            </div >
+            <div class="content p-2">
+                {{ user.edad }}
+            </div>
+        </div>
+        <div class="card-profile-data">
+            <div class="title p-2">
+                Altura:
+            </div >
+            <div class="content p-2">
+                 {{ user.altura }}
+            </div>
+        </div>
+        <div class="card-profile-data">
+            <div class="title p-2">
+                Peso:
+            </div >
+            <div class="content p-2">
+                 {{ user.peso }}
+            </div>
+        </div>
+        <div class="card-profile-data">
+            <div class="title p-2">
+                FC reposo:
+            </div >
+            <div class="content p-2">
+                 {{ user.fc_reposo }}
+            </div>
+        </div>
+        <div class="card-profile-data">
+            <div class="title p-2">
+                FC max:
+            </div >
+            <div class="content p-2">
+                 {{ user.fc_max }}
+            </div>
+        </div>
+        <div class="card-profile-data">
+            <div class="content p-2">
+                 Z1:
+            </div>
+            <div class="content p-2">
+                 {{ user.card_z1 }}
+            </div>
+            <div class="content p-2">
+                 Z2:
+            </div>
+            <div class="content p-2">
+                 {{ user.card_z2 }}
+            </div>
+            <div class="content p-2">
+                 Z3:
+            </div>
+            <div class="content p-2">
+                 {{ user.card_z3 }}
+            </div>
+            <div class="content p-2">
+                 Z4:
+            </div>
+            <div class="content p-2">
+                 {{ user.card_z4 }}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

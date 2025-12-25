@@ -168,6 +168,11 @@ def handle_data(activity):
     activity.fecha = data["fecha"]
     activity.sport = data["sport"]
     activity.ubicacion = data["ubicacion"]
+    activity.distancia = data["distancia"]
+    activity.ritmo = data["ritmo"]
+    activity.fc_med = data["fc_med"]
+    activity.tiempo = data["tiempo"]
+    activity.subida = data["subida"]
     activity.imagen = f"img_{activity.id}.png"
     activity.puntos = puntos
    

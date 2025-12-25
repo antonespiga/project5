@@ -5,6 +5,8 @@ from django.utils import timezone
 import os
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+
+from mapas.tcx_parse_calc import getUbicacion
 from .forms import ActivityForm, LoginForm, RegisterForm, Delete_confirmForm
 from .models import Activity, User
 
@@ -109,11 +111,36 @@ def activities(request):
             "activities": activities
         })
     elif request.method == 'GET':
+        
         activities = Activity.objects.filter(usuario = request.user).order_by("-fecha");
         return render(request, "mapas/activities.html", {
             "activities": activities,
+            "state": 'asc'
         })
 
+def actualizar(request):
+    activities = Activity.objects.filter(usuario=request.user)
+    for activity in activities:
+        if activity.ritmo == None:
+            ritmo = activity.acums.get("avg_speed")
+            setattr(activity, 'ritmo', ritmo)
+            activity.save()
+
+
+def activities_sorted(request, campo, state):
+    if campo == 'ubicacion':
+        campo = 'ubicacion__city'
+    if state == 'asc':
+        ordering = f"{campo}"
+        state="desc"
+    else:
+        ordering = f"-{campo}"
+        state = 'asc'
+    activities_sorted = Activity.objects.filter(usuario=request.user).order_by(ordering)
+    return render(request, "mapas/activities.html", {
+        "activities": activities_sorted, 
+        "state": state
+    })
 
 def activities_semana(request, year=None, semana=None):
     dia_semana_texto = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
@@ -335,6 +362,12 @@ def register(request):
 def profile(request, user_id):
     user = User.objects.get(pk=user_id)
     return render(request, "mapas/profile.html", {
+        "user": user
+    })
+
+def profile_fisico(request, user_id):
+    user = User.objects.get(pk=user_id)
+    return render(request, "mapas/profile_fisico.html", {
         "user": user
     })
 

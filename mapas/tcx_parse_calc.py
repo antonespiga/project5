@@ -278,13 +278,19 @@ def parse_calc_tcx(file):
     puntos_revisados = revisar_puntos(puntos)
     #print(puntos_revisados)
     #print((datetime.fromisoformat(fecha.text)).strftime("%A, %d de %B de %Y"))
-    ubicacion = getUbicacion(puntos[0].get("coordenadas"))
+    
+    ubicacion = getUbicacion(puntos_revisados[0].get("coordenadas"))
     return {
         "puntos": puntos_revisados,
         "lap_data":lap_data,
         "fecha": fecha.text,
         "ubicacion": ubicacion,
         "sport": sport,
+        "tiempo": acum_tiempo,
+        "distancia":  f"{acum_dist / 1000:.2f}",
+        "subida": f"{acum_subida:.0f}",
+        "fc_med": f"{acum_hr / acum_tiempo:.0f}"  ,
+        "ritmo": avg_speed,
         "acums": {
             "acum_tiempo": seconds_to_hms(acum_tiempo),
             "acum_distancia":  f"{acum_dist / 1000:.2f}",
@@ -327,11 +333,23 @@ def speed_filter(data, window_size=5):
     return filtered_formatted
 
 def getUbicacion(coord):
+    headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.5',
+    'Accept-Encoding': 'gzip, deflate',
+    'Connection': 'keep-alive',
+}
     try:
-        res = requests.get(f'https://photon.komoot.io/reverse?lon={coord[1]}&lat={coord[0]}')
+        res = requests.get(f'https://photon.komoot.io/reverse?lon={coord[1]}&lat={coord[0]}', headers=headers)
+        print(res)
         location = res.json().get('features')[0].get('properties')
-    except Exception:
+        
+        print('location')
+    except Exception as e:
+        print(e)
         location = None
+    print(f"location: {location}")
     return location
 
 if __name__ == "__main__":
