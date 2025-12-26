@@ -52,7 +52,11 @@
 <body class="ubuntu-regular">
     <div class="header">
         <nav class="navbar navbar-expand-md navbar-light">
-            <a class="navbar-brand original-surfer-regular" href="{% url 'dashboard' %}">
+            <a class="navbar-brand original-surfer-regular" 
+            {% if user.is_authenticated %} href="{% url 'dashboard' %}"
+            {% else %}
+            href="#"
+            {% endif %}>
                 MAPAS
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent"
@@ -62,6 +66,9 @@
             <div class="navbar-collapse collapse" id="navbarContent">
                 <ul class="navbar-nav mr-auto">
                     {% if user.is_authenticated %}
+                    <li class="nav-item mr-3">
+                        <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                    </li>
                     <li class="nav-item dropdown mr-3">
                         <a class="nav-link dropdown-toggle" id="dropMenu-1" data-toggle="dropdown" role="button"
                             aria-expanded="false">Calendario</a>
@@ -91,7 +98,6 @@
                     </li>
                     <li class="nav-item mr-3">
                         {% if not user.is_authenticated %}
-
                         <a class="nav-link" href="{% url 'register' %}">
                             Register
                         </a>

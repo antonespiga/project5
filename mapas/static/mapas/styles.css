@@ -322,8 +322,6 @@ p {
     font-size: small;
 }
 
-
-
 .bar-graf {
     width: 80%;
 }
@@ -503,8 +501,7 @@ p {
 
 .card {
     border:none;
-    
-}
+    }
 
 .card-data {
     display: flex;
@@ -725,6 +722,32 @@ p {
     border-bottom: 2px solid #007cb1;
     height: 60px;
     width: 160px;
+}
+
+.index-card {
+    background-color: #ecf0f3;
+    height: 40vh;
+    margin-left: 40px;
+    margin-top: 30px;
+    padding: 5px;
+    overflow: hidden;
+}
+
+.index-card:hover {
+    transform :scale(1.1);
+    }
+
+
+.index-card >.card-title {
+    border-bottom:rgb(128, 107, 107);
+    background-color: #007cb1;
+    color:#cee8e8;
+    text-align: center;
+}
+
+.index-img {
+    height:auto;
+    max-width: 100%;
 }
 
 @media(max-width: 1260px) {

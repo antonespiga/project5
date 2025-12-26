@@ -104,7 +104,7 @@ def index(request):
     if(request.user.is_authenticated):
         return render(request, "mapas/index.html")
     else:
-        return render(request, "mapas/login.html")
+        return render(request, "mapas/index.html")
 
 def activities(request):
     if request.method == 'POST':
