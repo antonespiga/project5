@@ -59,8 +59,9 @@
                     <div class="m-2">{{ activity.ubicacion.city }}</div>
                 </td>
                 <td></td>
-                <td>Editar</td>
-                <td> <a href="{% url 'delete_activity' activity.id %}">Eliminar</a></td>
+                
+                <td> 
+                    <a href="{% url 'delete_activity' activity.id %}"><button class="btn btn-warning" type="button">Eliminar</button></a></td>
             </tr>
             {% empty %}
             <div>No activities</div>

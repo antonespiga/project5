@@ -6,7 +6,7 @@
 <div>
     {% if user.is_authenticated %}
     <h2>{{ activity.nombre }} - {{ activity.fecha }}</h2>
-    <span>{{ activity.ubicacion.city }}</span>
+    <span><h3>{{ activity.ubicacion.city }}</h3></span>
     {{ activity.puntos|json_script:"puntos-data" }}
     
     {{ activity.coordenadas|json_script:"coords-data" }}
@@ -88,9 +88,7 @@
     <script src="{% static 'mapas/grafico.js' %}"></script>
     
 </div>
-<a href="{% url 'add_activity' %}">
-    >> Add activity
-</a>
+
 {% endif %}
 </div>
 {% endblock %}

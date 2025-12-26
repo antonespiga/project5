@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.utils import timezone
 import os
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from mapas.tcx_parse_calc import getUbicacion
@@ -23,6 +24,7 @@ import requests
 logger = logging.getLogger(__name__)
 
 # Create your views here.
+@login_required
 def dashboard(request):
     activities = Activity.objects.filter(usuario = request.user).order_by('-fecha')
     total_activities = activities.count()
@@ -141,7 +143,7 @@ def activities_sorted(request, campo, state):
         "activities": activities_sorted, 
         "state": state
     })
-
+@login_required
 def activities_semana(request, year=None, semana=None):
     dia_semana_texto = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
     hoy = timezone.now()
@@ -200,6 +202,7 @@ def activities_semana(request, year=None, semana=None):
         "next_year": next_year
     })
 
+@login_required
 def activities_mes(request, year=None, mes=None):
     hoy = timezone.now()
     mes_selec = mes if mes is not None else hoy.date().month
@@ -233,6 +236,7 @@ def activities_mes(request, year=None, mes=None):
         "weeks": weeks
     })
 
+@login_required
 def activities_year(request, year=None):
     hoy = timezone.now()
     year_sel = year if year is not None else hoy.date().year
@@ -248,6 +252,7 @@ def activities_year(request, year=None):
         "year_tots": year_tots
     })
 
+@login_required
 def activity_view(request, activity_id):
     activity = Activity.objects.get(pk=activity_id)
     
@@ -257,7 +262,7 @@ def activity_view(request, activity_id):
     })
     #key=pk.7ac696b7ea0768eddd3c991d72540a63
 
-
+@login_required
 def delete_activity(request, activity_id):
     activity = Activity.objects.get(pk=activity_id)
     if(request.method == 'POST'):
@@ -273,6 +278,8 @@ def delete_activity(request, activity_id):
         return render(request, "mapas/delete_activity.html", {
             "activity": activity
         })
+    
+@login_required
 def add_activity(request):
     if(request.method == 'POST'):
         archivo = request.FILES.get('archivo_tcx')
@@ -359,12 +366,14 @@ def register(request):
             "form": form
         })
 
+@login_required
 def profile(request, user_id):
     user = User.objects.get(pk=user_id)
     return render(request, "mapas/profile.html", {
         "user": user
     })
 
+@login_required
 def profile_fisico(request, user_id):
     user = User.objects.get(pk=user_id)
     return render(request, "mapas/profile_fisico.html", {

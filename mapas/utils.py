@@ -111,7 +111,7 @@ def isNone(data):
     return None in data if type(data).__name__ == 'list' else  type(data).__name__ == 'NoneType'
 
 def crear_img(coords, id):
-    m = folium.Map(location = coords[0], zoom_start=13)
+    m = folium.Map(location = coords[0], zoom_start=10)
     folium.PolyLine(coords).add_to(m)
     folium.Marker(coords[0], tooltip="Inicio", icon=folium.Icon(color="green")).add_to(m)
     folium.Marker(coords[-1], tooltip="Final", icon=folium.Icon(color="red")).add_to(m)
