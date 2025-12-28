@@ -48,18 +48,25 @@ Together these elements create a multi-layered project that demonstrates backend
 - `mapas/static/mapas/grafico.js`: Front-end logic to create the graphics used in the application (bars, lines, bubbles).
 - `mapas/static/mapas/mapa.js`: Front-end logic to create the activity´s route map from the obtained coordinates.
 - `mapas/templates/mapas/activities_mes.html`: File to show a calendar with the activities registered in the selected month. It shows a sport icon and distance in the activity`s date place and a week resume (number of activities, total time and total distance).
+
 ![alt text](<Captura de pantalla 2025-12-26 214013.png>)
 - `mapas/templates/mapas/activities_semana.html`: File to show the activities registered in the selected week. It shows a list with this week´s activities and a bubble graphic with the bubble´s size proportional to the activity distance. It also shows a bar graphic of the activities distance.
+
 ![alt text](<Captura de pantalla 2025-12-27 233016.png>)
 - `mapas/templates/mapas/activities_year.html`: File to show the activities registered in the selected year. It has a bar graphic with each month's activities distance.Also shows the year`s number of activities and the total distance and time. Below this is shown a grid with each month and its data( number of activities and total time).
+
 ![alt text](<Captura de pantalla 2025-12-27 232739-1.png>)
-- `mapas/templates/mapas/activities.html`: File to show a list of all the activities.
+- `mapas/templates/mapas/activities.html`: File to show a list of all the activities / my activities.
 - `mapas/templates/mapas/activity_view.html`: File to show the selected activity. It shows:
     · the route map
+
     ![alt text](<Captura de pantalla 2025-12-27 233219.png>)
+
     · a line graphic representing bpm, altitude, pace, cadence
+
     ![alt text](<Captura de pantalla 2025-12-27 233232.png>)
     · a table with each lap (kilometer) data
+
     ![alt text](<Captura de pantalla 2025-12-27 233245.png>)
 
 - `mapas/templates/mapas/agregar.html`: File with the form to add an activity.
