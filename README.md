@@ -1,16 +1,20 @@
-Project5 — Route/Activity Mapper
+Project5 — Activities/routes repository
 
 Overview
 
-Project5 is a small Django web application for importing, parsing and visualizing GPS route/activity files (TCX). It provides model-backed storage of activities, simple map visualizations, per-activity images, and helper utilities to parse TCX files and compute metrics (distance, heart rate, pace, elevation). The app is implemented under the `mapas` Django app and a lightweight project configuration in `project5`.
+Project5 is a small Django web application for importing, parsing and visualizing GPS route/activity files (TCX). La aplicacion almacena los archivos .TCX en una carpeta y los parsea para extraer los datos necesarios para ser visualizados por el usuario en forma de gráfico de la actividad y con un mapa de la ruta de la actividad. The app is implemented under the `mapas` Django app and a lightweight project configuration in `project5`.
 
 Distinctiveness and Complexity
 
 This project meets distinctiveness and complexity requirements because:
 - It implements a full-stack web application (Django backend + HTML/JS front-end) rather than a trivial script or single-file exercise.
-- It includes non-trivial data parsing and processing: custom TCX parsing logic, smoothing utilities, and metric computations (distance, pace, elevation gain, heart-rate summaries) which required careful handling of timestamps, missing data and coordinate interpolation.
-- The UI integrates map rendering and activity plotting in the `static/mapas` assets, and the project contains reusable data-processing utilities (e.g., `tcx_parser.py`, `tcx_parse_calc.py`, `tcx_parser_split.py`).
-- There is data modeling (Django models, migrations) and file handling for imported activity media (images and thumbnails), which adds complexity beyond simple CRUD apps.
+- Existe similitud con el proyect 'Network' en el sentido de que en 'Network' se publican posts y en 'mapas' rutas, sin embargo, el tratamiento previo de los datos necesario para que estos puedan ser guardados y luego publicados creo que aporta una sustantiva diferencia.
+- Se realizan tareas no triviales como: 
+    · parsear los archivos TCX para obtener los datos y guardarlos en las estructuras de datos        apropiadas.
+    · analizar los datos obtenidos para verificar que sean consistentes y que no haya vacios en ellos y si así fuera aplicar las correcciones necesarias.
+    · tratar datos para corregir posibles lecturas erroneas y poder crear gráficas suavizadas, sin picos exagerados.
+- Se utiliza Leaflet y Folium para generar los mapas a partir de las coordenadas obtenidas.
+- Se emplea Charjs para crear los distintos tipos de gráficos (linea, barras, burbujas).
 
 What I created (file list and contents)
 
@@ -22,11 +26,11 @@ Key repository files (high level)
 - [manage.py](manage.py): Django CLI entrypoint to runserver, migrate, etc.
 - [project5/settings.py](project5/settings.py): Django settings for the project.
 - [project5/urls.py](project5/urls.py): URL router.
-- [mapas/models.py](mapas/models.py): Django models describing activities, routes, and related items.
+- [mapas/models.py](mapas/models.py): Django models describing activities and users.
 - [mapas/views.py](mapas/views.py): Request handlers and page views.
-- [mapas/tcx_parser.py, mapas/tcx_parse_calc.py, mapas/tcx_parser_split.py]: TCX parsing and calculation utilities used to import and process route files.
+- [mapas/tcx_parse_calc.py]: TCX parsing and calculation utilities used to import and process route files.
 - [mapas/static/mapas/*]: JavaScript/CSS for map rendering and smoothing/plotting utilities.
-- [rutas/]: Folder holding example TCX files used for testing and import.
+- [rutas/]: Folder to save imported TCX files.
 
 What’s contained in each file I created
 
@@ -68,8 +72,3 @@ Notes and additional information for reviewers
 - Database: The project uses SQLite by default (db.sqlite3). If you need a working database snapshot, ensure `db.sqlite3` exists in the project root. If it was removed from the repo (gitignored), you can create an empty DB with the migration commands above and optionally import TCX files from the `rutas/` folder using any import script or admin pages included.
 - Static files: The repo includes static JS/CSS in `mapas/static/mapas/` for visualization. For production, collectstatic and a proper static server are recommended.
 - Security: Secret keys and production settings are not included. This repository is configured for local development only.
-- If you want me to re-add `db.sqlite3` to the repository history (or undo a commit that removed it), tell me which commit to target and whether you want it re-introduced as a tracked file or left locally; I can perform a git commit amend, interactive rebase, or a reset depending on your preference.
-
-Contact
-
-If you want any changes to the README content or to add a database snapshot, tell me and I will update or add the files as requested.

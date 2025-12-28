@@ -105,15 +105,28 @@ def index(request):
         return render(request, "mapas/index.html")
     else:
         return render(request, "mapas/index.html")
+    
+def all_activities(request):
+    if request.method == 'POST':
+        activities = Activity.objects.all()
+        return render(request, "mapas/activities.html", {
+            "activities": activities
+        })
+    elif request.method == 'GET':
+        activities = Activity.objects.all().order_by("-fecha");
+        return render(request, "mapas/activities.html", {
+            "activities": activities,
+            "state": 'asc'
+        })
 
-def activities(request):
+
+def my_activities(request):
     if request.method == 'POST':
         activities = Activity.objects.get(usuario=request.user)
         return render(request, "mapas/activities.html", {
             "activities": activities
         })
     elif request.method == 'GET':
-        
         activities = Activity.objects.filter(usuario = request.user).order_by("-fecha");
         return render(request, "mapas/activities.html", {
             "activities": activities,

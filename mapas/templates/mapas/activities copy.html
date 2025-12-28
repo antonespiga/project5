@@ -9,7 +9,6 @@
     <table>
         <thead class="table-head">
             <tr>
-                <th id="sort-deporte" class="p-2"><a href="{% url 'activities_sorted' user state %}">Usuario</a></th>
                 <th id="sort-deporte" class="p-2"><a href="{% url 'activities_sorted' "sport" state %}">Deporte</a></th>
                 <th id="sort-fecha" class="p-2">Fecha</th>
                 <th class="p-2">Titulo</th>
@@ -31,7 +30,7 @@
                 <td>
                     <div class=" m-2">
                         <a href="{% url 'activity_view' activity.id %}">
-                            <div>{{ activity.usuario }}</div>
+                            <div>{{ activity.user }}</div>
                         </a>
                     </div>
                 </td>
@@ -66,13 +65,11 @@
                 <td>
                     <div class="m-2">{{ activity.ubicacion.city }}</div>
                 </td>
-                <td>
-                {% if user == activity.usuario %}
+                <td></td>
+                
                 <td> 
                     <a href="{% url 'delete_activity' activity.id %}"><button class="btn btn-warning" type="button">Eliminar</button></a></td>
-                </td>
-                {% endif %}
-                </tr>
+            </tr>
             {% empty %}
             <div>No activities</div>
             {% endfor %}

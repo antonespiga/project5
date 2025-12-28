@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta viewport="device-width=device-width, initial-scale=1.0" content-type="text/css">
-    <meta name="title" content="Mapaaaas">
+    <meta name="title" content="Mapas">
     <title class="original-surfer-regular">Mapas</title>
     <link rel="shortcut icon" type="image/png" href="{% static 'icons/mapas_icon.png' %}"/>
 
@@ -84,7 +84,8 @@
                             Activities
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="dropMenu-2">
-                            <li><a class="dropdown-item" href="{% url 'activities' %}">Activities</a></li>
+                            <li><a class="dropdown-item" href="{% url 'my_activities' %}">My activities</a></li>
+                            <li><a class="dropdown-item" href="{% url 'all_activities' %}">All activities</a></li>
                             <li><a class="dropdown-item" href="{% url 'add_activity' %}">Add activitiy</a></li>
                         </ul>
                     </li>
