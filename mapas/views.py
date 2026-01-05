@@ -2,12 +2,12 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils import timezone
-import os
+from django.core import serializers
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from mapas.tcx_parse_calc import getUbicacion
+from mapas.tcx_parse_calc import seconds_to_hms
 from .forms import ActivityForm, LoginForm, RegisterForm, Delete_confirmForm
 from .models import Activity, User
 
@@ -105,31 +105,52 @@ def index(request):
         return render(request, "mapas/index.html")
     else:
         return render(request, "mapas/index.html")
-    
-def all_activities(request):
+
+def crear_activities_plano(query_activities):
+    activities = []
+    for query_activity in query_activities:
+        activity = {
+            "id": query_activity.id,
+            "usuario": query_activity.usuario.username,
+            "deporte": query_activity.sport,
+            "ubicacion": query_activity.ubicacion,
+            "fecha": query_activity.fecha,
+            "distancia": f"{query_activity.distancia:.2f}",
+            "tiempo": seconds_to_hms(query_activity.tiempo),
+            "fc_med": f"{query_activity.fc_med:.0f}",
+            "titulo": query_activity.nombre,
+            "subida": f"{query_activity.subida:.0f}",
+            "ritmo": query_activity.ritmo
+        }
+        activities.append(activity)
+    return activities
+
+def all_activities(request):   
+    query_activities = Activity.objects.all();
+    activities = crear_activities_plano(query_activities) 
     if request.method == 'POST':
-        activities = Activity.objects.all()
         return render(request, "mapas/activities.html", {
             "activities": activities
         })
     elif request.method == 'GET':
-        activities = Activity.objects.all().order_by("-fecha");
         return render(request, "mapas/activities.html", {
             "activities": activities,
-            "state": 'asc'
+            "state": 'asc',
+            "my": "all"
         })
 
 
 def my_activities(request):
+    query_activities = Activity.objects.filter(usuario=request.user)
+    activities = crear_activities_plano(query_activities)
     if request.method == 'POST':
-        activities = Activity.objects.get(usuario=request.user)
         return render(request, "mapas/activities.html", {
             "activities": activities
         })
     elif request.method == 'GET':
-        activities = Activity.objects.filter(usuario = request.user).order_by("-fecha");
         return render(request, "mapas/activities.html", {
             "activities": activities,
+            "my": "my",
             "state": 'asc'
         })
 
@@ -142,7 +163,7 @@ def actualizar(request):
             activity.save()
 
 
-def activities_sorted(request, campo, state):
+def activities_sorted(request, campo=None, state=None, my=None):
     if campo == 'ubicacion':
         campo = 'ubicacion__city'
     if state == 'asc':
@@ -151,10 +172,15 @@ def activities_sorted(request, campo, state):
     else:
         ordering = f"-{campo}"
         state = 'asc'
-    activities_sorted = Activity.objects.filter(usuario=request.user).order_by(ordering)
+    if my == "my":
+        query_activities_sorted = Activity.objects.filter(usuario=request.user).order_by(ordering)
+    else:
+        query_activities_sorted = Activity.objects.all().order_by(ordering);    
+    activities_sorted = crear_activities_plano(query_activities_sorted)
     return render(request, "mapas/activities.html", {
         "activities": activities_sorted, 
-        "state": state
+        "state": state,
+        "my": my
     })
 @login_required
 def activities_semana(request, year=None, semana=None):
@@ -219,7 +245,7 @@ def activities_semana(request, year=None, semana=None):
 def activities_mes(request, year=None, mes=None):
     hoy = timezone.now()
     mes_selec = mes if mes is not None else hoy.date().month
-    year_selec = year if year is not None else hoy.isocalendar().year
+    year_selec = year if year is not None else hoy.year
     
     if(mes_selec == 12):
         next_month = 1
@@ -286,7 +312,7 @@ def delete_activity(request, activity_id):
             logger.exception("Error al eliminar activity %s: %s",activity_id, e)
             messages.error(request, "Error al eliminar actividad")
     
-        return redirect("activities")
+        return redirect("my_activities")
     else:
         return render(request, "mapas/delete_activity.html", {
             "activity": activity
@@ -416,7 +442,7 @@ def crear_semana(activities):
     cont_run = 0; cont_swimm = 0; cont_other = 0;
     for i in range(7):
         a = None
-        current_date = inicio + timedelta(days=i)
+        current_date = inicio + timedelta(days=i) 
         di_run = {
             "dia": nom[i],
             "fecha": current_date.day,

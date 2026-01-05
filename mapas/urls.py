@@ -22,6 +22,6 @@ urlpatterns = [
     path("activities/<int:year>/mes/<int:mes>", views.activities_mes, name="mes"),
     path("activities/year", views.activities_year, name="year_actual"),
     path("activities/year/<int:year>", views.activities_year, name="year"),
-    path("activities/sorted/<str:campo>/<str:state>", views.activities_sorted, name="activities_sorted")
+    path("activities/sorted/<str:my>/<str:campo>/<str:state>", views.activities_sorted, name="activities_sorted")
     
 ]

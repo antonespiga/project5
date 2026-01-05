@@ -152,7 +152,7 @@
     function createGraf() {    
         const grf = document.getElementById('graf')
         const gpuntos = getElement('puntos-data')
-
+        const coords = getElement('coords-data')
         if(!grf || ! gpuntos) return null
 
         const bpm = gpuntos.map(p => p.heart_rate);
@@ -172,6 +172,18 @@
         const speedsFilled =suavizar_gaussian(suavizar_ritmo(speeds, 5), 5, 1.0)
         const ejex = Math.ceil(tiempos_calc.length / speedsFilled.length)
         const speedsExpanded = [];
+
+        const splits = []
+        for(let k = 1; k < distancias[distancias.length - 1]; k++) {
+            for(let i = 0; i < distancias.length - 1; i++) {
+                if(distancias[i] >= k * 1000) {
+                    splits.push(coords[i])
+                    break
+            }
+            }
+        }
+        
+
         for (let i = 0; i < tiempos_calc.length; i++) {
             // Encuentra el índice correspondiente en speedsFilled
             const idx = Math.floor(i / ejex);
@@ -273,9 +285,16 @@
                             if(ind < coords.length || coords[ind] !== undefined) {
                                 const ptoX = coords[ind][0];
                                 const ptoY = coords[ind][1];
-                                updateMarker(ptoX, ptoY);
+                                document.dispatchEvent(
+                                    new CustomEvent('onHoverGrafico',{
+                                        detail: {
+                                            lat: ptoX,
+                                            lng: ptoY,
+                                            dist: distancias[ind],
+                                            splits
+                                        }
+                                    }))
                             }
-                        
                         }
                     },
                 responsive: true,

@@ -13,7 +13,7 @@
                 <input type="hidden" name="activity_id" value="{{ activity.id }}">
                 <input type="hidden" name="name" value="{{ activity.name }}">
                 <input class="btn btn-dark" type="submit" value="Delete">
-                <a class="btn btn-secondary" href="{% url "activities" %}">Cancel</a>
+                <a class="btn btn-secondary" href="{% url "my_activities" %}">Cancel</a>
             </form>
         </div>
 {% endblock %}

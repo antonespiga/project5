@@ -5,20 +5,23 @@
 {% block body %}
 
 {% if user.is_authenticated %}
+{{ activities|json_script:"acts" }}
+
 <div class="container-fluid">
     <table>
         <thead class="table-head">
             <tr>
-                <th id="sort-deporte" class="p-2"><a href="{% url 'activities_sorted' user state %}">Usuario</a></th>
-                <th id="sort-deporte" class="p-2"><a href="{% url 'activities_sorted' "sport" state %}">Deporte</a></th>
+                <th id="sort-usuario" class="p-2"><a href="{% url 'activities_sorted' my "usuario" state %}">Usuario</a></th>
+                <th id="sort-deporte" class="p-2"><a href="{% url 'activities_sorted' my "sport" state %}">Deporte</a>
+                </th>
                 <th id="sort-fecha" class="p-2">Fecha</th>
                 <th class="p-2">Titulo</th>
-                <th id="sort-distancia" class="p-2"><a href="{% url 'activities_sorted' "distancia" state %}">Distancia</a></th>
-                <th id="sort-tiempo" class="p-2"><a href="{% url 'activities_sorted' "tiempo" state %}">Tiempo</a></th>
-                <th id="sort-subida" class="p-2"><a href="{% url 'activities_sorted' "subida" state %}">Subida</a></th>
-                <th id="sort-fc" class="p-2"><a href="{% url 'activities_sorted' "fc_med" state %}">FC Med</a></th>
-                <th id="sort.ritmo" class="p-2"><a href="{% url 'activities_sorted' "ritmo" state %}">Ritmo</a></th>
-                <th id="sort-ubicacion" class="p-2"><a href="{% url 'activities_sorted' "ubicacion" state %}">Ubicación</a>
+                <th id="sort-distancia" class="p-2"><a href="{% url 'activities_sorted' my "distancia" state %}">Distancia</a></th>
+                <th id="sort-tiempo" class="p-2"><a href="{% url 'activities_sorted' my "tiempo" state %}">Tiempo</a></th>
+                <th id="sort-subida" class="p-2"><a href="{% url 'activities_sorted' my "subida" state %}">Subida</a></th>
+                <th id="sort-fc" class="p-2"><a href="{% url 'activities_sorted' my "fc_med" state %}">FC Med</a></th>
+                <th id="sort-ritmo" class="p-2"><a href="{% url 'activities_sorted' my "ritmo" state %}">Ritmo</a></th>
+                <th id="sort-ubicacion" class="p-2"><a href="{% url 'activities_sorted' my "ubicacion" state %}">Ubicación</a>
                 </th>
                 <th class="table-espacio p-2"></th>
                 <th class="table-opciones p-2"></th>
@@ -38,7 +41,7 @@
                 <td>
                     <div class=" m-2">
                         <a href="{% url 'activity_view' activity.id %}">
-                            <div>{{ activity.sport }}</div>
+                            <div>{{ activity.deporte }}</div>
                         </a>
                     </div>
                 </td>
@@ -46,39 +49,47 @@
                     <div class="m.2">{{ activity.fecha }}</div>
                 </td>
                 <td>
-                    <div class="m-2">{{ activity.nombre }}</div>
+                    <div class="m-2">{{ activity.titulo }}</div>
                 </td>
                 <td>
-                    <div class="m-2">{{ activity.acums.acum_distancia }}</div>
+                    <div class="m-2">{{ activity.distancia }}</div>
                 </td>
                 <td>
-                    <div class="m-2">{{ activity.acums.acum_tiempo }}</div>
+                    <div class="m-2">{{ activity.tiempo }}</div>
                 </td>
                 <td>
-                    <div class="m-2">{{ activity.acums.acum_subida }}</div>
+                    <div class="m-2">{{ activity.subida }}</div>
                 </td>
                 <td>
-                    <div class="m-2">{{ activity.acums.acum_hr }}</div>
+                    <div class="m-2">{{ activity.fc_med }}</div>
                 </td>
                 <td>
-                    <div class="m-2">{{ activity.acums.avg_speed }}</div>
+                    <div class="m-2">{{ activity.ritmo }}</div>
                 </td>
                 <td>
                     <div class="m-2">{{ activity.ubicacion.city }}</div>
                 </td>
                 <td>
-                {% if user == activity.usuario %}
-                <td> 
-                    <a href="{% url 'delete_activity' activity.id %}"><button class="btn btn-warning" type="button">Eliminar</button></a></td>
+                    {% if user.username == activity.usuario %}
+                <td>
+                    <a href="{% url 'delete_activity' activity.id %}"><button class="btn btn-warning"
+                            type="button">Eliminar</button></a>
+                </td>
                 </td>
                 {% endif %}
-                </tr>
+            </tr>
             {% empty %}
             <div>No activities</div>
             {% endfor %}
         </tbody>
     </table>
-</div>
+    </div>
+    <div class="container-fluid">
+        <div id="all_map"></div>
+    <script src="{% static 'mapas/mapa.js' %}"></script>
+    <script src="{% static 'mapas/grafico.js' %}"></script>
+    </div>
+   
 
 {% endif %}
 

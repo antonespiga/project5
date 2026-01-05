@@ -23,6 +23,12 @@ aside {
 
 }
 
+#all_map {
+    height: 40vh;
+    width:80vw;
+    margin: 30px;
+}
+
 .header {
     box-shadow: 0 0 4px rgba(12, 12, 12, 0.3);
     height:auto;
